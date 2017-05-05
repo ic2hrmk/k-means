@@ -8,6 +8,7 @@ type Cluster struct {
 	points        []*Point
 }
 
+type Clusters []*Cluster
 
 func NewCluster(clusterId int32, cm *Point) *Cluster {
 	var cmValues []float64

@@ -7,6 +7,8 @@ type Point struct {
 	values    []float64
 }
 
+type Points []*Point
+
 func NewPoint(pointId int32, values []float64, name string) *Point {
 	return &Point{
 		pointId: pointId,

@@ -8,9 +8,14 @@ import (
 	"log"
 )
 
+// Distance methods
+const (
+	EuclidDistance = "euclid"
+)
+
 type DistanceFunc func(*Point, *Cluster) (float64, error)
 
-func EuclidDistance(p *Point, cl *Cluster) (distance float64, err error) {
+func EuclidDistanceFunc(p *Point, cl *Cluster) (distance float64, err error) {
 	if p == nil {
 		err = errors.New("undefined point")
 		return
@@ -35,7 +40,7 @@ func EuclidDistance(p *Point, cl *Cluster) (distance float64, err error) {
 	return
 }
 
-func getNearestCenterId(p *Point, cls []*Cluster, fcalc DistanceFunc) (clusterId int32, err error) {
+func getNearestCenterId(p *Point, cls Clusters, fcalc DistanceFunc) (clusterId int32, err error) {
 	if len(cls) < 2 {
 		err = errors.New("no clusters are available")
 		return clusterId, err
@@ -73,7 +78,7 @@ func isPointUsed(pointId int32, ps []int32) bool {
 	return false
 }
 
-func Calc(points []*Point, k int32, maxIterations int32, fcalc DistanceFunc) (clusters []*Cluster, err error) {
+func Calc(points Points, k int32, maxIterations int32, fcalc DistanceFunc) (clusters Clusters, err error) {
 	if k > int32(len(points)) {
 		err = errors.New("number of clusters is bigger than number of points")
 		return
