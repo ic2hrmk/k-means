@@ -9,6 +9,7 @@ import (
 	"errors"
 	"k-means/k_means"
 	"encoding/json"
+	"k-means/templates"
 )
 
 const ALLOWED_FILE_TYPE = "text/plain; charset=utf-8"
@@ -118,17 +119,42 @@ func processHandler(w http.ResponseWriter, r *http.Request) {
 
 		cls, err := k_means.Calc(points, int32(clustersParam), int32(iterationsParam), distanceMethod)
 		if err != nil {
-			log.Fatal(err.Error())
-		} else {
-			for _, cl := range cls {
-				log.Println("Cluster", cl.GetId(), ":")
-				for i := int32(0); i < cl.GetPointsCount(); i++ {
-					p := cl.GetPoint(i)
-					log.Println("Point", p.GetId(), ":", p.GetValues())
-				}
-				log.Println("Values:", cl.GetCentralValues())
-			}
+			http.Error(w,
+				err.Error(),
+				http.StatusInternalServerError)
+			return
 		}
+
+		data, err := json.MarshalIndent(&cls, "  ", "    ")
+		if err != nil {
+			http.Error(w,
+				err.Error(),
+				http.StatusInternalServerError)
+			return
+		}
+
+		template, err := templates.GetTemplateWithData("map.html", struct{ Data string }{Data: string(data)})
+		if err != nil {
+			http.Error(w,
+				err.Error(),
+				http.StatusInternalServerError)
+			return
+		}
+
+		w.Write(template)
+
+		//if err != nil {
+		//	log.Fatal(err.Error())
+		//} else {
+		//	for _, cl := range cls {
+		//		log.Println("Cluster", cl.GetId(), ":")
+		//		for i := int32(0); i < cl.GetPointsCount(); i++ {
+		//			p := cl.GetPoint(i)
+		//			log.Println("Point", p.GetId(), ":", p.GetValues())
+		//		}
+		//		log.Println("Values:", cl.GetCentralValues())
+		//	}
+		//}
 	} else {
 		http.Error(w,
 			http.StatusText(http.StatusMethodNotAllowed),
