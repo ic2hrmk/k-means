@@ -5,7 +5,8 @@ import (
 	"math"
 	"math/rand"
 	"time"
-	"log"
+	"fmt"
+	"strconv"
 )
 
 // Distance methods
@@ -79,6 +80,8 @@ func isPointUsed(pointId int32, ps []int32) bool {
 }
 
 func Calc(points Points, k int32, maxIterations int32, fcalc DistanceFunc) (clusters Clusters, err error) {
+	var timeStart = time.Now()
+
 	if k > int32(len(points)) {
 		err = errors.New("number of clusters is bigger than number of points")
 		return
@@ -143,12 +146,26 @@ func Calc(points Points, k int32, maxIterations int32, fcalc DistanceFunc) (clus
 		}
 
 		if done == true || iterationNumber == maxIterations {
-			log.Println("computed")
 			break
 		} else {
 			iterationNumber += 1
 		}
 	}
 
+	fmt.Println("computed in " + time.Since(timeStart).String() +
+			"\nclusters: " + strconv.Itoa(len(clusters)) +
+			"\npoints: " + strconv.Itoa(len(points)))
+
 	return clusters, err
+}
+
+func (cls Clusters) PrettyPrint() {
+	for _, cl := range cls {
+		fmt.Println("Cluster", cl.GetId(), ":")
+		for i := int32(0); i < cl.GetPointsCount(); i++ {
+			p := cl.GetPoint(i)
+			fmt.Println("Point", p.GetId(), ":", p.GetValues())
+		}
+		fmt.Println("Values:", cl.GetCentralValues())
+	}
 }

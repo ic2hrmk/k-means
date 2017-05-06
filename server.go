@@ -117,6 +117,9 @@ func processHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		log.Println("new data request accepted...")
+
+
 		cls, err := k_means.Calc(points, int32(clustersParam), int32(iterationsParam), distanceMethod)
 		if err != nil {
 			http.Error(w,
@@ -142,19 +145,6 @@ func processHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		w.Write(template)
-
-		//if err != nil {
-		//	log.Fatal(err.Error())
-		//} else {
-		//	for _, cl := range cls {
-		//		log.Println("Cluster", cl.GetId(), ":")
-		//		for i := int32(0); i < cl.GetPointsCount(); i++ {
-		//			p := cl.GetPoint(i)
-		//			log.Println("Point", p.GetId(), ":", p.GetValues())
-		//		}
-		//		log.Println("Values:", cl.GetCentralValues())
-		//	}
-		//}
 	} else {
 		http.Error(w,
 			http.StatusText(http.StatusMethodNotAllowed),
