@@ -96,19 +96,61 @@
     var clusters = {{.Data}};
 
     function initMap() {
-        var myLatLng = {lat: 50.27, lng: 30.30};
+        var centralView = {lat: 50.27, lng: 30.30};
 
         var map = new google.maps.Map(document.getElementById('map'), {
-            zoom: 4,
-            center: myLatLng
+            zoom: 10,
+            center: centralView
         });
 
-        var marker = new google.maps.Marker({
-            position: myLatLng,
-            map: map,
-            title: 'Hello World!'
+        //var iconURLPrefix = 'http://maps.google.com/mapfiles/ms/icons/';
+        var iconURLPrefix = 'http://www.iconsdb.com/icons/download/';
+
+//        var icons = [
+//            iconURLPrefix + 'red-dot.png',
+//            iconURLPrefix + 'green-dot.png',
+//            iconURLPrefix + 'blue-dot.png',
+//            iconURLPrefix + 'orange-dot.png',
+//            iconURLPrefix + 'purple-dot.png',
+//            iconURLPrefix + 'pink-dot.png',
+//            iconURLPrefix + 'yellow-dot.png'
+//        ];
+
+        var icons = [
+            iconURLPrefix + 'orange/map-marker-2-16.png',
+            iconURLPrefix + 'barbie-pink/map-marker-2-16.png',
+            iconURLPrefix + 'soylent-red/map-marker-2-16.png',
+            iconURLPrefix + 'caribbean-blue/map-marker-2-16.png',
+            iconURLPrefix + 'guacamole-green/map-marker-2-16.png',
+            iconURLPrefix + 'royal-blue/map-marker-2-16.png'
+        ];
+
+        var iconIndex = 0;
+
+        $.each(clusters, function(index, cluster) {
+            var icon = icons[iconIndex++ % icons.length];
+            var label = cluster.ClusterId.toString();
+
+            for (i = 0; i < cluster.Points.length; i++) {
+                var point = cluster.Points[i];
+                var location = { lat: point.Values[0], lng: point.Values[1] };
+
+                addMarker(location, map, icon, label);
+            }
         });
     }
+
+    function addMarker(location, map, icon, label) {
+        // Add the marker at the clicked location, and add the next-available label
+        // from the array of alphabetical characters.
+        var marker = new google.maps.Marker({
+            position: location,
+            label: label,
+            icon: icon,
+            map: map
+        });
+    }
+
 
     function openNav() {
         document.getElementById("side_nav").style.width = "350px";
